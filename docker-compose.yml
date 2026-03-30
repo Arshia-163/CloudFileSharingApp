@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cloudshare-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production_please}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost}
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - cloudshare-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cloudshare-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${PORT:-80}:80"
+    networks:
+      - cloudshare-net
+
+volumes:
+  uploads_data:
+    driver: local
+
+networks:
+  cloudshare-net:
+    driver: bridge

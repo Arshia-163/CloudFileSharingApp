@@ -1,0 +1,77 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+npm-debug.log
+npm-error.log
+yarn-error.log
+pnpm-debug.log
+
+# Build outputs
+dist/
+build/
+output/
+*.min.js
+*.min.css
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.bak
+
+# Logs
+*.log
+logs/
+lerna-debug.log
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Backend
+backend/uploads/
+backend/node_modules/
+backend/dist/
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+
+# IDE specific
+.vscode/
+.idea/
+*.iml
+.gradle/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.turbo/
+
+# OS
+.DS_Store
+.env.production.local
+
+# Dependencies
+package-lock.json (optional - depends on your preference)
+yarn.lock (optional - depends on your preference)
+
