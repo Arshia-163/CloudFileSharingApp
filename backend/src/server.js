@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
+
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -11,25 +12,45 @@ const shareRoutes = require('./routes/share');
 
 const app = express();
 
-// Security middleware
+// ==========================
+// SECURITY MIDDLEWARE
+// ==========================
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' }
   })
 );
 
+// ==========================
+// CORS CONFIGURATION
+// ==========================
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        process.env.CLIENT_URL
+      ];
+
+      // allow requests with no origin
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   })
 );
 
+// ==========================
+// BODY PARSER
+// ==========================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==========================
-// ROOT ROUTE (NEW)
+// ROOT ROUTE
 // ==========================
 app.get('/', (req, res) => {
   res.json({
@@ -38,15 +59,24 @@ app.get('/', (req, res) => {
   });
 });
 
-// Static files for uploads
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// ==========================
+// STATIC FILES
+// ==========================
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '../uploads'))
+);
 
-// Routes
+// ==========================
+// API ROUTES
+// ==========================
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/share', shareRoutes);
 
-// Health check
+// ==========================
+// HEALTH CHECK
+// ==========================
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -54,7 +84,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Error handler
+// ==========================
+// ERROR HANDLER
+// ==========================
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
@@ -66,7 +98,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Connect to MongoDB Atlas
+// ==========================
+// MONGODB CONNECTION
+// ==========================
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
