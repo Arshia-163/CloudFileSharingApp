@@ -163,7 +163,7 @@ export default function FileGrid({ files, viewMode = 'grid', onRefresh, onSelect
           >
             {file.mimetype?.startsWith('image/') ? (
               <img
-                src={`/uploads/${file.storedName}`}
+                src={`${process.env.REACT_APP_API_URL}/uploads/${file.storedName}`}
                 alt={file.originalName}
                 className="file-card-preview"
                 onError={e => { e.target.style.display='none'; }}
